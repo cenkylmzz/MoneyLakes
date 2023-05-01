@@ -149,19 +149,19 @@ public class Main {
                     if (allPoints.get(j).get(k).poolName == null) {
                         if (nameCount > 25 && allPoints.get(j).get(k + 1).poolName != null) {
                             System.out.print(allPoints.get(j).get(k).value + " ");
-                        } else {
-                            if (allPoints.get(j).get(k + 1).value < 10) {
+                        }
+                        else {
+                            if (allPoints.get(j).get(k + 1).value < 10)
                                 System.out.print(allPoints.get(j).get(k).value + "  ");
-                            } else {
+                            else
                                 System.out.print(allPoints.get(j).get(k).value + " ");
-                            }
                         }
-                    } else {
-                        if (allPoints.get(j).get(k + 1).value < 10) {
+                    }
+                    else {
+                        if (allPoints.get(j).get(k + 1).value < 10)
                             System.out.print(allPoints.get(j).get(k).poolName + "  ");
-                        } else {
+                        else
                             System.out.print(allPoints.get(j).get(k).poolName + " ");
-                        }
                         nameCount++;
                     }
                 }
