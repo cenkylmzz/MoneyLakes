@@ -1,16 +1,12 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         ArrayList<String> lowerCaseAlphabet = new ArrayList<>(Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h",
                 "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"));
-//        ArrayList<String> upperCaseAlphabet = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H",
-//                "I", "J", "K", "L","M", "N", "O", "P", "Q", "R", "S", "T", "U","V","W","X","Y","Z"));
-        Scanner in = new Scanner(new File("src\\input3.txt"));
+        Scanner in = new Scanner(new File("src\\input4.txt"));
         int row = in.nextInt();
         int column = in.nextInt();
         ArrayList<ArrayList<Integer>> valueMap = new ArrayList<>();
@@ -42,6 +38,7 @@ public class Main {
             }
             else {
                 System.out.println("Not a valid step!");
+                i--;
             }
         }
         printMap(lowerCaseAlphabet, allPoints);
@@ -54,14 +51,89 @@ public class Main {
             }
         }
         setAdj(allPoints);
-        for(ArrayList<Point> p : allPoints){
-            for(Point point : p){
-                point.setPool();
+        ArrayList<Pool> allPools = new ArrayList<>();
+        for(int i = 1; i < allPoints.size(); i++){
+            for(int j = 1; j < allPoints.get(0).size(); j++){
+                Point currentPoint = allPoints.get(i).get(j);
+                Pool pool = new Pool();
+                if (dfsIterative(currentPoint, currentPoint.value,
+                        new int[allPoints.size()][allPoints.get(0).size()],
+                        pool)){
+                    allPools.add(pool);
+                }
             }
         }
-        //TODO  dfs();
+        removeDuplicate(allPools);
+        Collections.reverse(allPools);
+        removeDuplicate(allPools);
+        Collections.sort(allPools);
+        double ans = 0;
+        for(int i = 0; i < allPools.size(); i++){
+            allPools.get(i).setName(i);
+            ans += allPools.get(i).calculateVolume();
+        }
+        printMap(lowerCaseAlphabet, allPoints);
+        System.out.printf("Final score: " + "%.2f", ans);
+    }
+    public static void removeDuplicate(ArrayList<Pool> allPools) {
+        for(int i = 0; i < allPools.size(); i++){
+            for(int j = i+1; j < allPools.size(); j++){
+                if(allPools.get(i).points.containsAll(allPools.get(j).points)){
+                    allPools.remove(allPools.get(j));
+                    j--;
+                }
+            }
+        }
+    }
+    public static boolean dfsIterative(Point p, int maxValue, int[][] visited, Pool pool){
+        Stack<Point> stack = new Stack<>();
+        stack.push(p);
+        while (!stack.empty()){
+            Point point = stack.pop();
+            pool.addPoint(point);
+            if(visited[point.row][point.column] == 1) continue;
+            if(point.row == 0 || point.column == 0 || point.row == visited.length -1 || point.column == visited[0].length -1) return false;
+            visited[point.row][point.column] = 1;
+            for (Point pAdj: point.adj){
+                if(visited[pAdj.row][pAdj.column] == 0 && pAdj.value <= maxValue){
+                    stack.push(pAdj);
+                }
+            }
+        }
+        return true;
+    }
+    public static ArrayList<ArrayList<Point>> setPoints(ArrayList<ArrayList<Integer>> valueMap,
+                                                        ArrayList<String> lowerCaseAlphabet){
+        ArrayList<ArrayList<Point>> allPoints = new ArrayList<>();
+        for (int i = 0; i < valueMap.size(); i++){
+            allPoints.add(new ArrayList<>());
+            int count = 0;
+            for(int k = 0; k < valueMap.get(i).size(); k++){
+                if(k == lowerCaseAlphabet.size()) break;
+                allPoints.get(i).add(new Point(i, k ,lowerCaseAlphabet.get(k), valueMap.get(i).get(k)));
+                count++;
+            }
+            if (valueMap.get(i).size() > lowerCaseAlphabet.size()){
+                boolean flag = false;
+                for (int k = count; k < valueMap.get(i).size(); k++){
+                    for(String s : lowerCaseAlphabet){
+                        for(String j : lowerCaseAlphabet){
+                            if(count == valueMap.get(i).size()){
+                                flag = true;
+                                break;
+                            }
+                            allPoints.get(i).add(new Point(i, count,s+j, valueMap.get(i).get(count)));
+                            count++;
+                        }
+                        if (flag) break;
+                    }
+                }
+            }
+        }
+        return allPoints;
     }
     public static void printMap(ArrayList<String> lowerCaseAlphabet, ArrayList<ArrayList<Point>> allPoints){
+        int nameCount = 0;
         for(int j = 0; j< allPoints.size(); j++){
             if(j < 10) System.out.print("  " + j + "  ");
             if (j >= 10 && j < 100) System.out.print(" " + j + "  ");
@@ -71,7 +143,28 @@ public class Main {
                     System.out.println(allPoints.get(j).get(k).value);
                 }
                 else {
-                    System.out.print(allPoints.get(j).get(k).value + "  ");
+                    if(allPoints.get(j).get(k).poolName == null) {
+                        if(nameCount > 25 && allPoints.get(j).get(k+1).poolName != null){
+                            System.out.print(allPoints.get(j).get(k).value + " ");
+                        }
+                        else {
+                            if(allPoints.get(j).get(k+1).value < 10){
+                                System.out.print(allPoints.get(j).get(k).value + "  ");
+                            }
+                            else {
+                                System.out.print(allPoints.get(j).get(k).value + " ");
+                            }
+                        }
+                    }
+                    else{
+                        if(allPoints.get(j).get(k+1).value < 10) {
+                            System.out.print(allPoints.get(j).get(k).poolName + "  ");
+                        }
+                        else {
+                            System.out.print(allPoints.get(j).get(k).poolName + " ");
+                        }
+                        nameCount++;
+                    }
                 }
             }
         }
@@ -112,6 +205,7 @@ public class Main {
             }
         }
     }
+    
     public static Point findPoint(ArrayList<ArrayList<Point>> allPoints, String move){
         Point changedPoint = null;
         boolean found = false;
@@ -127,37 +221,7 @@ public class Main {
         }
         return changedPoint;
     }
-    public static ArrayList<ArrayList<Point>> setPoints(ArrayList<ArrayList<Integer>> valueMap,
-                                                         ArrayList<String> lowerCaseAlphabet){
-        ArrayList<ArrayList<Point>> allPoints = new ArrayList<>();
-        for (int i = 0; i < valueMap.size(); i++){
-            allPoints.add(new ArrayList<>());
-            int count = 0;
-            for(int k = 0; k < valueMap.get(i).size(); k++){
-                if(k == lowerCaseAlphabet.size()) break;
-                allPoints.get(i).add(new Point(i, k ,lowerCaseAlphabet.get(k), valueMap.get(i).get(k)));
-                count++;
-            }
-            if (valueMap.get(i).size() > lowerCaseAlphabet.size()){
-                boolean flag = false;
-                for (int k = count; k < valueMap.get(i).size(); k++){
-                    for(String s : lowerCaseAlphabet){
-                        for(String j : lowerCaseAlphabet){
-                            if(count == valueMap.get(i).size()){
-                                flag = true;
-                                break;
-                            }
-                            allPoints.get(i).add(new Point(i, count,s+j, valueMap.get(i).get(count)));
-                            count++;
-                        }
-                        if (flag) break;
-                    }
-                }
-            }
-        }
-        return allPoints;
-    }
-    public static void setAdj(ArrayList<ArrayList<Point>> allPoints){
+    public static void setAdj(ArrayList<ArrayList<Point>> allPoints){         //Why can't we use try catch here  :(((((
         for(ArrayList<Point> ap: allPoints){
             for(Point p: ap){
                 if(p.row == 0){
@@ -227,5 +291,15 @@ public class Main {
             }
         }
     }
-
+//    public static boolean dfsRecursive(Point p, int maxValue, int[][] visited, Pool pool){
+//        if(p.row == 0 || p.column == 0 || p.row == visited.length -1 || p.column == visited[0].length -1) return false;
+//        visited[p.row][p.column] = 1;
+//        pool.addPoint(p);
+//        for(Point point: p.adj){
+//            if(visited[point.row][point.column] == 0 && point.value <= maxValue){
+//                dfsRecursive(point,maxValue, visited, pool);
+//            }
+//        }
+//        return true;
+//    }
 }
