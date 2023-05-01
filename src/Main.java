@@ -16,33 +16,24 @@ public class Main {
                 valueMap.get(i).add(in.nextInt());
             }
         }
+        in.close();
         ArrayList<ArrayList<Point>> allPoints = setPoints(valueMap, lowerCaseAlphabet);
-        for (int i = 0; i < 11; i++) {
-            String move = in.next();
-            Point movedPoint = null;
-            if (i == 0) continue;
-            if (i == 1) {
-                printMap(lowerCaseAlphabet, allPoints);
-                System.out.println("Add stone " + i + " / 10 to coordinate:");
-                movedPoint = findPoint(allPoints, move);
-            }
-            if (i != 1) {
-                printMap(lowerCaseAlphabet, allPoints);
-                System.out.println("---------------");
-                System.out.println("Add stone " + i + " / 10 to coordinate:");
-                movedPoint = findPoint(allPoints, move);
-            }
-
+        printMap(lowerCaseAlphabet, allPoints);
+        Scanner input = new Scanner(System.in);
+        for (int i = 1; i < 11; i++) {
+            System.out.println("Add stone " + i + " / 10 to coordinate:");
+            String move = input.next();
+            Point movedPoint = findPoint(allPoints, move);
             if (movedPoint != null) {
                 movedPoint.value++;
+                printMap(lowerCaseAlphabet, allPoints);
+                System.out.println("---------------");
             } else {
                 System.out.println("Not a valid step!");
                 i--;
             }
         }
-        printMap(lowerCaseAlphabet, allPoints);
-        System.out.println("---------------");
-
+        input.close();
         setAdj(allPoints);
         ArrayList<Pool> allPools = new ArrayList<>();
         for (int i = 1; i < allPoints.size(); i++) {
@@ -133,9 +124,24 @@ public class Main {
     public static void printMap(ArrayList<String> lowerCaseAlphabet, ArrayList<ArrayList<Point>> allPoints) {
         int nameCount = 0;
         for (int j = 0; j < allPoints.size(); j++) {
-            if (j < 10) System.out.print("  " + j + "  ");
-            if (j >= 10 && j < 100) System.out.print(" " + j + "  ");
-            if (j >= 100) System.out.print(j + "  ");
+            if (j < 10) {
+                if (allPoints.get(j).get(0).value < 10)
+                    System.out.print("  " + j + "  ");
+                else
+                    System.out.print("  " + j + " ");
+            }
+            if (j >= 10 && j < 100) {
+                if (allPoints.get(j).get(0).value < 10)
+                    System.out.print(" " + j + "  ");
+                else
+                    System.out.print(" " + j + " ");
+            }
+            if (j >= 100) {
+                if (allPoints.get(j).get(0).value < 10)
+                    System.out.print(j + "  ");
+                else
+                    System.out.print(j + " ");
+            }
             for (int k = 0; k < allPoints.get(j).size(); k++) {
                 if (k == allPoints.get(j).size() - 1) {
                     System.out.println(allPoints.get(j).get(k).value);
