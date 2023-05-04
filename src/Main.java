@@ -21,7 +21,7 @@ public class Main {
         printMap(lowerCaseAlphabet, allPoints);
         Scanner input = new Scanner(System.in);
         for (int i = 1; i < 11; i++) {
-            System.out.println("Add stone " + i + " / 10 to coordinate:");
+            System.out.print("Add stone " + i + " / 10 to coordinate:");
             String move = input.next();
             Point movedPoint = findPoint(allPoints, move);
             if (movedPoint != null) {
@@ -40,9 +40,7 @@ public class Main {
             for (int j = 1; j < allPoints.get(0).size(); j++) {
                 Point currentPoint = allPoints.get(i).get(j);
                 Pool pool = new Pool();
-                if (dfsIterative(currentPoint, currentPoint.value,
-                        new int[allPoints.size()][allPoints.get(0).size()],
-                        pool)) {
+                if (dfsIterative(currentPoint, currentPoint.value, new int[allPoints.size()][allPoints.get(0).size()], pool)) {
                     allPools.add(pool);
                 }
             }
@@ -218,77 +216,22 @@ public class Main {
         return changedPoint;
     }
 
-    public static void setAdj(ArrayList<ArrayList<Point>> allPoints) {         //Why can't we use try catch here  :(((((
+    public static void setAdj(ArrayList<ArrayList<Point>> allPoints) {
         for (ArrayList<Point> ap : allPoints) {
             for (Point p : ap) {
-                if (p.row == 0) {
-                    if (p.column == 0) {
-                        p.adj.add(allPoints.get(p.row).get(p.column + 1));
-                        p.adj.add(allPoints.get(p.row + 1).get(p.column));
-                        p.adj.add(allPoints.get(p.row + 1).get(p.column + 1));
-                    } else if (p.column == ap.size() - 1) {
-                        p.adj.add(allPoints.get(p.row).get(p.column - 1));
-                        p.adj.add(allPoints.get(p.row + 1).get(p.column));
-                        p.adj.add(allPoints.get(p.row + 1).get(p.column - 1));
-                    } else {
-                        p.adj.add(allPoints.get(p.row).get(p.column - 1));
-                        p.adj.add(allPoints.get(p.row).get(p.column + 1));
-                        p.adj.add(allPoints.get(p.row + 1).get(p.column - 1));
-                        p.adj.add(allPoints.get(p.row + 1).get(p.column));
-                        p.adj.add(allPoints.get(p.row + 1).get(p.column + 1));
-                    }
-                } else if (p.row == allPoints.size() - 1) {
-                    if (p.column == 0) {
-                        p.adj.add(allPoints.get(p.row).get(p.column + 1));
-                        p.adj.add(allPoints.get(p.row - 1).get(p.column));
-                        p.adj.add(allPoints.get(p.row - 1).get(p.column + 1));
-                    } else if (p.column == ap.size() - 1) {
-                        p.adj.add(allPoints.get(p.row).get(p.column - 1));
-                        p.adj.add(allPoints.get(p.row - 1).get(p.column));
-                        p.adj.add(allPoints.get(p.row - 1).get(p.column - 1));
-                    } else {
-                        p.adj.add(allPoints.get(p.row).get(p.column - 1));
-                        p.adj.add(allPoints.get(p.row).get(p.column + 1));
-                        p.adj.add(allPoints.get(p.row - 1).get(p.column - 1));
-                        p.adj.add(allPoints.get(p.row - 1).get(p.column));
-                        p.adj.add(allPoints.get(p.row - 1).get(p.column + 1));
-                    }
-                } else {
-                    if (p.column == 0) {
-                        p.adj.add(allPoints.get(p.row).get(p.column + 1));
-                        p.adj.add(allPoints.get(p.row + 1).get(p.column));
-                        p.adj.add(allPoints.get(p.row + 1).get(p.column + 1));
-                        p.adj.add(allPoints.get(p.row - 1).get(p.column));
-                        p.adj.add(allPoints.get(p.row - 1).get(p.column + 1));
-                    } else if (p.column == ap.size() - 1) {
-                        p.adj.add(allPoints.get(p.row).get(p.column - 1));
-                        p.adj.add(allPoints.get(p.row + 1).get(p.column));
-                        p.adj.add(allPoints.get(p.row + 1).get(p.column - 1));
-                        p.adj.add(allPoints.get(p.row - 1).get(p.column));
-                        p.adj.add(allPoints.get(p.row - 1).get(p.column - 1));
-                    } else {
-                        p.adj.add(allPoints.get(p.row).get(p.column - 1));
-                        p.adj.add(allPoints.get(p.row).get(p.column + 1));
-                        p.adj.add(allPoints.get(p.row + 1).get(p.column - 1));
-                        p.adj.add(allPoints.get(p.row + 1).get(p.column));
-                        p.adj.add(allPoints.get(p.row + 1).get(p.column + 1));
-                        p.adj.add(allPoints.get(p.row - 1).get(p.column - 1));
-                        p.adj.add(allPoints.get(p.row - 1).get(p.column));
-                        p.adj.add(allPoints.get(p.row - 1).get(p.column + 1));
-                    }
+                try {
+                    p.adj.add(allPoints.get(p.row).get(p.column - 1));
+                    p.adj.add(allPoints.get(p.row).get(p.column + 1));
+                    p.adj.add(allPoints.get(p.row + 1).get(p.column - 1));
+                    p.adj.add(allPoints.get(p.row + 1).get(p.column));
+                    p.adj.add(allPoints.get(p.row + 1).get(p.column + 1));
+                    p.adj.add(allPoints.get(p.row - 1).get(p.column - 1));
+                    p.adj.add(allPoints.get(p.row - 1).get(p.column));
+                    p.adj.add(allPoints.get(p.row - 1).get(p.column + 1));
+                }
+                catch (IndexOutOfBoundsException ignored){
                 }
             }
         }
     }
 }
-//    public static boolean dfsRecursive(Point p, int maxValue, int[][] visited, Pool pool){
-//        if(p.row == 0 || p.column == 0 || p.row == visited.length -1 || p.column == visited[0].length -1) return false;
-//        visited[p.row][p.column] = 1;
-//        pool.addPoint(p);
-//        for(Point point: p.adj){
-//            if(visited[point.row][point.column] == 0 && point.value <= maxValue){
-//                dfsRecursive(point,maxValue, visited, pool);
-//            }
-//        }
-//        return true;
-//    }
