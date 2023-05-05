@@ -20,7 +20,7 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         ArrayList<String> lowerCaseAlphabet = new ArrayList<>(Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h",
                 "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"));
-        Scanner in = new Scanner(new File("src\\input3.txt"));
+        Scanner in = new Scanner(new File(args[0]));
         int row = in.nextInt();
         int column = in.nextInt();
         ArrayList<ArrayList<Integer>> valueMap = new ArrayList<>();
